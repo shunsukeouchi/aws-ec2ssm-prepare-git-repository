@@ -3,17 +3,12 @@ Resources:
   WebSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
-      GroupDescription: "http,https public"
-      GroupName: http-https-public  # セキュリティグループの名前 を記載
+      GroupDescription: "ssm-edp-sg"
+      GroupName: ssm-edp-sg
       SecurityGroupIngress:
-            -
-              IpProtocol: tcp
-              FromPort : 80
-              ToPort : 80
-              CidrIp: 0.0.0.0/0
             -
               IpProtocol: tcp
               FromPort : 443
               ToPort : 443
-              CidrIp: 0.0.0.0/0
-      VpcId: vpc-XXXXXXXXXXX  # VPC ID を記載
+              CidrIp: 192.168.0.0/20
+      VpcId: vpc-06e90da0caaf6037d
