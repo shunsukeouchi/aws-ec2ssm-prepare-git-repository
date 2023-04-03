@@ -1,14 +1,78 @@
 AWSTemplateFormatVersion: "2010-09-09"
+# ------------------------------------------------------------#
+# Input Parameters
+# ------------------------------------------------------------#
+
 Resources:
-  WebSecurityGroup:
+# ------------------------------------------------------------#
+# Create SG
+# ------------------------------------------------------------#
+  SsmEndpointSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
       GroupDescription: "ssm-edp-sg"
       GroupName: ssm-edp-sg
       SecurityGroupIngress:
-            -
-              IpProtocol: tcp
-              FromPort : 443
-              ToPort : 443
-              CidrIp: 192.168.0.0/20
+        IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 192.168.0.0/20
       VpcId: vpc-06e90da0caaf6037d
+  EC2MessagesEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "ec2messages-edp-sg"
+      GroupName: ec2messages
+      SecurityGroupIngress:
+        IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 192.168.0.0/20
+      VpcId: vpc-06e90da0caaf6037d
+  SsmMessagesEndpointSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: "ssmmessages-edp-sg"
+      GroupName: ssmmessages-edp-sg
+      SecurityGroupIngress:
+        IpProtocol: tcp
+        FromPort: 443
+        ToPort: 443
+        CidrIp: 192.168.0.0/20
+      VpcId: vpc-06e90da0caaf6037d
+# ------------------------------------------------------------#
+# Create ssm End Point
+# ------------------------------------------------------------#
+  SsmEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: com.amazonaws.ap-northeast-1.ssm
+      SubnetIds: 
+        - subnet-073089eb7ef9087ff
+      VpcId: vpc-06e90da0caaf6037d
+      VpcEndpointType: Interface
+      SecurityGroupIds: 
+        - !Ref SsmEndpointSecurityGroup
+      PrivateDnsEnabled: true
+  EC2MessagesEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: com.amazonaws.ap-northeast-1.ec2messages
+      SubnetIds: 
+        - subnet-073089eb7ef9087ff
+      VpcId: vpc-06e90da0caaf6037d
+      VpcEndpointType: Interface
+      SecurityGroupIds: 
+        - !Ref EC2MessagesEndpointSecurityGroup
+      PrivateDnsEnabled: true
+  SsmMessagesEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: com.amazonaws.ap-northeast-1.ssmmessages
+      SubnetIds: 
+        - subnet-073089eb7ef9087ff
+      VpcId: vpc-06e90da0caaf6037d
+      VpcEndpointType: Interface
+      SecurityGroupIds: 
+        - !Ref SsmMessagesEndpointSecurityGroup
+      PrivateDnsEnabled: true
