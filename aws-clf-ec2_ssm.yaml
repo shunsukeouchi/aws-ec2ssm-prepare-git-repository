@@ -76,3 +76,11 @@ Resources:
       SecurityGroupIds: 
         - !Ref SsmMessagesEndpointSecurityGroup
       PrivateDnsEnabled: true
+  S3MessagesEndpoint:
+    Type: AWS::EC2::VPCEndpoint
+    Properties:
+      ServiceName: com.amazonaws.ap-northeast-1.s3
+      RouteTableIds: 
+        - rtb-08514228f270844a4
+      VpcId: vpc-06e90da0caaf6037d
+      VpcEndpointType: Gateway
