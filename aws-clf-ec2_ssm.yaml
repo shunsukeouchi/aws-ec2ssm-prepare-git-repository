@@ -2,6 +2,28 @@ AWSTemplateFormatVersion: "2010-09-09"
 # ------------------------------------------------------------#
 # Input Parameters
 # ------------------------------------------------------------#
+Parameters:
+#VPCID
+  VpcId:
+    Description : "VPC ID"
+    Type: AWS::EC2::VPC::Id
+
+#SG Allow CidrBlock
+  CidrBlock:
+    Description: Please type the CidrBlock allows SG.
+    Type: String
+
+#InterfaceEndpointSubnet
+  InterfaceEndpointSubnet:
+    Description : "Interface Endpoint Subnet"
+    Type : AWS::EC2::Subnet::Id
+
+#GatewayEndpointRoutetable
+  GatewayEndpointRoutetable:
+    Description : "Gateway Endpoint Routetable"
+    Type : AWS::EC2::RouteTable::Id
+
+
 
 Resources:
 # ------------------------------------------------------------#
@@ -16,8 +38,8 @@ Resources:
         IpProtocol: tcp
         FromPort: 443
         ToPort: 443
-        CidrIp: 192.168.0.0/20
-      VpcId: vpc-06e90da0caaf6037d
+        CidrIp: !Sub ${CidrBlock}
+      VpcId: !Ref VpcId
   EC2MessagesEndpointSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -27,8 +49,8 @@ Resources:
         IpProtocol: tcp
         FromPort: 443
         ToPort: 443
-        CidrIp: 192.168.0.0/20
-      VpcId: vpc-06e90da0caaf6037d
+        CidrIp: !Sub ${CidrBlock}
+      VpcId: !Ref VpcId
   SsmMessagesEndpointSecurityGroup:
     Type: AWS::EC2::SecurityGroup
     Properties:
@@ -38,8 +60,8 @@ Resources:
         IpProtocol: tcp
         FromPort: 443
         ToPort: 443
-        CidrIp: 192.168.0.0/20
-      VpcId: vpc-06e90da0caaf6037d
+        CidrIp: !Sub ${CidrBlock}
+      VpcId: !Ref VpcId
 # ------------------------------------------------------------#
 # Create ssm End Point
 # ------------------------------------------------------------#
@@ -48,8 +70,8 @@ Resources:
     Properties:
       ServiceName: com.amazonaws.ap-northeast-1.ssm
       SubnetIds: 
-        - subnet-073089eb7ef9087ff
-      VpcId: vpc-06e90da0caaf6037d
+        - !Ref InterfaceEndpointSubnet
+      VpcId: !Ref VpcId
       VpcEndpointType: Interface
       SecurityGroupIds: 
         - !Ref SsmEndpointSecurityGroup
@@ -59,8 +81,8 @@ Resources:
     Properties:
       ServiceName: com.amazonaws.ap-northeast-1.ec2messages
       SubnetIds: 
-        - subnet-073089eb7ef9087ff
-      VpcId: vpc-06e90da0caaf6037d
+        - !Ref InterfaceEndpointSubnet
+      VpcId: !Ref VpcId
       VpcEndpointType: Interface
       SecurityGroupIds: 
         - !Ref EC2MessagesEndpointSecurityGroup
@@ -70,8 +92,8 @@ Resources:
     Properties:
       ServiceName: com.amazonaws.ap-northeast-1.ssmmessages
       SubnetIds: 
-        - subnet-073089eb7ef9087ff
-      VpcId: vpc-06e90da0caaf6037d
+        - !Ref InterfaceEndpointSubnet
+      VpcId: !Ref VpcId
       VpcEndpointType: Interface
       SecurityGroupIds: 
         - !Ref SsmMessagesEndpointSecurityGroup
@@ -81,6 +103,6 @@ Resources:
     Properties:
       ServiceName: com.amazonaws.ap-northeast-1.s3
       RouteTableIds: 
-        - rtb-08514228f270844a4
-      VpcId: vpc-06e90da0caaf6037d
+        - !Ref GatewayEndpointRoutetable
+      VpcId: !Ref VpcId
       VpcEndpointType: Gateway
