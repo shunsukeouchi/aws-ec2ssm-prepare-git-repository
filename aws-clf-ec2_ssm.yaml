@@ -21,7 +21,7 @@ Parameters:
 #GatewayEndpointRoutetable
   GatewayEndpointRoutetable:
     Description : "Gateway Endpoint Routetable"
-    Type : AWS::EC2::RouteTable::Id
+    Type : String
 
 
 
